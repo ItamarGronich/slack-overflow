@@ -103,6 +103,8 @@ function ajax(request, url, callback, body, headers, responseType){
 * ================================================================================================================
 * */
                     // arrow function is to prevent ajax(); from firing until event dispatches
+                    // also an 'event parmeter is sent with the arrow function and is passed as the '
+                    // last argument to ajax(); function.
 btnRefresh.onclick = event => {ajax('GET', 'https://hidden-headland-7200.herokuapp.com/', function(xhr){
     // the json object with
     // an array of object messages
@@ -122,7 +124,7 @@ btnRefresh.onclick = event => {ajax('GET', 'https://hidden-headland-7200.herokua
 
     // assigning messages to msgBoard
     msgBoard.innerHTML = string;
-},'','','',event)}
+},'','','',event)};
 
 
 /*
@@ -139,7 +141,7 @@ btnPost.onclick = event => {ajax('POST', 'https://hidden-headland-7200.herokuapp
     btnRefresh.click();
 
     //body argument                                                    headers argument   responseType argument
-},'{"message":"'+ msgBody.value + '","name":"' + usrName.value +'"}','Content-Type:application/json','json',event)}
+},'{"message":"'+ msgBody.value + '","name":"' + usrName.value +'"}','Content-Type:application/json','json',event)};
 
 
 /*
@@ -153,7 +155,7 @@ btnDelete.onclick = event => {ajax('DELETE', ('https://hidden-headland-7200.hero
     console.log("message status: " + feedback);
     btnRefresh.click();
 
-},'','Content-Type:application/json','json',event)}
+},'','Content-Type:application/json','json',event)};
 
 
 /*
@@ -167,4 +169,4 @@ btnChange.onclick = event => {ajax('PUT', ('https://hidden-headland-7200.herokua
     console.log("message status: " + feedback);
     btnRefresh.click();
 
-},'{"message":"'+ msgBody.value + '","name":"' + usrName.value +'"}','Content-Type:application/json','json',event)}
+},'{"message":"'+ msgBody.value + '","name":"' + usrName.value +'"}','Content-Type:application/json','json',event)};
