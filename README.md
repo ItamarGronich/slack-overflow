@@ -5,7 +5,7 @@ This exercise was made as part of an AJAX class. Using plain JavaScript and maki
 with a callback to exectue all possible requests the particular server could handle.
 
 ## Go check it out! 
-Got to https://ItamarGronich.github.io/slack-overflow to check it out.
+Go to https://ItamarGronich.github.io/slack-overflow to check it out.
 
 Simply fill out your name and tyoe your message, press send and the message will be sent to the general
 server where all students of this particular exercise also participate.
