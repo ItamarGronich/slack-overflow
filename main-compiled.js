@@ -96,127 +96,146 @@ function ajax(request, url, callback, body, headers, responseType) {
     console.log('request ' + request + ' has been sent');
 }
 
-/*
-* ================================================================================================================
-*                                           Refresh button event
-* ================================================================================================================
-* */
-// arrow function is to prevent ajax(); from firing until event dispatches
-// also, an 'event' parameter is sent with the arrow function and is passed as the
-// last argument to ajax(); function.
-btnRefresh.onclick = event => {
-    ajax('GET', 'https://hidden-headland-7200.herokuapp.com/', function (xhr) {
-        // the json object with
-        // an array of object messages
-        var messages = xhr.response,
+// edd event listeners only when DOM is loaded and parsed
+document.addEventListener('DOMContentLoaded', function () {
+    console.log('DOM fully loaded and parsed');
 
-        // string that will later be concatenated into the
-        // innerHTML.
-        string = '',
+    /*
+     * ================================================================================================================
+     *                                           Refresh button event
+     * ================================================================================================================
+     * */
+    // arrow function is to prevent ajax(); from firing until event dispatches
+    // also, an 'event' parameter is sent with the arrow function and is passed as the
+    // last argument to ajax(); function.
+    btnRefresh.onclick = event => {
+        ajax('GET', 'https://hidden-headland-7200.herokuapp.com/', function (xhr) {
+            // the json object with
+            // an array of object messages
+            var messages = xhr.response,
 
-        // caching the <section class="msgBoard"> tag.
-        msgBoard = document.querySelector('.msgBoard');
+            // string that will later be concatenated into the
+            // innerHTML.
+            string = '',
 
-        // looping over all the message objects
-        for (var i = 0; i < messages.length; i++) {
-            string += '<article class="msg"><h1>' + messages[i].name + '</h1><p data-layout="hide"> ID:' + messages[i]._id + '</p><p>' + messages[i].message + '</p></article>';
-        }
+            // caching the <section class="msgBoard"> tag.
+            msgBoard = document.querySelector('.msgBoard');
 
-        // assigning messages to msgBoard
-        msgBoard.innerHTML = string;
+            // looping over all the message objects
+            for (var i = 0; i < messages.length; i++) {
+                string += '<article class="msg"><h1>' + messages[i].name + '</h1><p data-layout="hide"> ID:' + messages[i]._id + '</p><p>' + messages[i].message + '</p></article>';
+            }
 
-        //after all messages pushed to DOM - select all in array like.
-        msgArray = document.querySelectorAll('.msg');
+            // assigning messages to msgBoard
+            msgBoard.innerHTML = string;
 
-        // assign all present messaged with an event listener
-        for (var j = 0; j < msgArray.length; j++) {
-            msgArray[j].addEventListener('click', function () {
+            //after all messages pushed to DOM - select all in array like.
+            msgArray = document.querySelectorAll('.msg');
 
-                //and assign the clicked element with a selected state.
-                // if it has one already remove the attribute.
-                if (this.hasAttribute('data-state')) {
-                    this.removeAttribute('data-state');
-                } else {
-                    //when clicked remove all selected states
-                    for (var i = 0; i < msgArray.length; i++) {
-                        msgArray[i].removeAttribute('data-state');
-                    }
-                    // assign the clicked element with a selected state.
-                    this.setAttribute('data-state', 'selected');
-                }
+            parseEventListeners();
+        }, '', '', '', event);
+    };
 
-                // insert the id value of current selected message to the msgId input field
-                msgId.value = this.childNodes[1].textContent.slice(4);
+    /*
+    * ================================================================================================================
+    *                                           Post button event
+    * ================================================================================================================
+    * */
 
-                // if an article is currently selected - unhide edit button
-                if (this.hasAttribute('data-state')) {
-                    btnChange.setAttribute('data-state', 'selected');
-                } else {
-                    // if it isn't hide it
-                    btnChange.removeAttribute('data-state');
-                }
+    btnPost.onclick = event => {
+        ajax('POST', 'https://hidden-headland-7200.herokuapp.com/new', function (xhr) {
+            var feedback = xhr.response !== null ? xhr.response.message : "no response";
+            console.log("message status: " + feedback);
 
-                // exactly the same for the delete button
-                if (this.hasAttribute('data-state')) {
-                    btnDelete.setAttribute('data-state', 'selected');
-                } else {
-                    btnDelete.removeAttribute('data-state');
-                }
-            });
-        }
-    }, '', '', '', event);
-};
+            // upon success simulates click event on refresh button to load new posts
+            btnRefresh.click();
 
-/*
- * ================================================================================================================
- *                                           Post button event
- * ================================================================================================================
- * */
+            //body argument                                                    headers argument   responseType argument
+        }, '{"message":"' + msgBody.value + '","name":"' + usrName.value + '"}', 'Content-Type:application/json', 'json', event);
+    };
 
-btnPost.onclick = event => {
-    ajax('POST', 'https://hidden-headland-7200.herokuapp.com/new', function (xhr) {
-        var feedback = xhr.response !== null ? xhr.response.message : "no response";
-        console.log("message status: " + feedback);
+    /*
+    * ================================================================================================================
+    *                                           Delete button event
+    * ================================================================================================================
+    * */
 
-        // upon success simulates click event on refresh button to load new posts
-        btnRefresh.click();
+    btnDelete.onclick = event => {
+        ajax('DELETE', 'https://hidden-headland-7200.herokuapp.com/delete/' + msgId.value, function (xhr) {
+            var feedback = xhr.response !== null ? xhr.response.message : "no response";
+            console.log("message status: " + feedback);
+            btnRefresh.click();
+        }, '', 'Content-Type:application/json', 'json', event);
+    };
 
-        //body argument                                                    headers argument   responseType argument
-    }, '{"message":"' + msgBody.value + '","name":"' + usrName.value + '"}', 'Content-Type:application/json', 'json', event);
-};
+    /*
+    * ================================================================================================================
+    *                                           Edit button event
+    * ================================================================================================================
+    * */
 
-/*
- * ================================================================================================================
- *                                           Delete button event
- * ================================================================================================================
- * */
-
-btnDelete.onclick = event => {
-    ajax('DELETE', 'https://hidden-headland-7200.herokuapp.com/delete/' + msgId.value, function (xhr) {
-        var feedback = xhr.response !== null ? xhr.response.message : "no response";
-        console.log("message status: " + feedback);
-        btnRefresh.click();
-    }, '', 'Content-Type:application/json', 'json', event);
-};
-
-/*
- * ================================================================================================================
- *                                           Edit button event
- * ================================================================================================================
- * */
-
-btnChange.onclick = event => {
-    ajax('PUT', 'https://hidden-headland-7200.herokuapp.com/edit/' + msgId.value, function (xhr) {
-        var feedback = xhr.response !== null ? xhr.response.message : "no response";
-        console.log("message status: " + feedback);
-        btnRefresh.click();
-    }, '{"message":"' + msgBody.value + '","name":"' + usrName.value + '"}', 'Content-Type:application/json', 'json', event);
-};
+    btnChange.onclick = event => {
+        ajax('PUT', 'https://hidden-headland-7200.herokuapp.com/edit/' + msgId.value, function (xhr) {
+            var feedback = xhr.response !== null ? xhr.response.message : "no response";
+            console.log("message status: " + feedback);
+            btnRefresh.click();
+        }, '{"message":"' + msgBody.value + '","name":"' + usrName.value + '"}', 'Content-Type:application/json', 'json', event);
+    };
+});
 
 /*
  * ================================================================================================================
  *                                           Click editing Utility
  * ================================================================================================================
  * */
+
+function parseEventListeners() {
+    // assign all present messaged with an event listener
+    for (var j = 0; j < msgArray.length; j++) {
+        msgArray[j].addEventListener('click', function () {
+
+            //and assign the clicked element with a selected state.
+            // if it has one already remove the attribute.
+            if (this.hasAttribute('data-state')) {
+                this.removeAttribute('data-state');
+            } else {
+                //when clicked remove all selected states
+                for (var i = 0; i < msgArray.length; i++) {
+                    msgArray[i].removeAttribute('data-state');
+                }
+                // assign the clicked element with a selected state.
+                this.setAttribute('data-state', 'selected');
+            }
+
+            // insert the id value of current selected message to the msgId input field
+            msgId.value = this.childNodes[1].textContent.slice(4);
+
+            // if an article is currently selected - unhide edit button
+            if (this.hasAttribute('data-state')) {
+                btnChange.setAttribute('data-state', 'selected');
+            } else {
+                // if it isn't hide it
+                btnChange.removeAttribute('data-state');
+            }
+
+            // exactly the same for the delete button
+            if (this.hasAttribute('data-state')) {
+                btnDelete.setAttribute('data-state', 'selected');
+            } else {
+                btnDelete.removeAttribute('data-state');
+            }
+        });
+    }
+}
+
+/*
+*============================================= END OF EDITING UTIL =====================================
+* */
+
+// fire refresh when page is fully loaded.
+window.addEventListener('load', function () {
+    console.log('page finished loading');
+    btnRefresh.click();
+});
 
 //# sourceMappingURL=main-compiled.js.map

@@ -98,50 +98,115 @@ function ajax(request, url, callback, body, headers, responseType){
 }
 
 
+// edd event listeners only when DOM is loaded and parsed
+document.addEventListener('DOMContentLoaded', function(){
+    console.log('DOM fully loaded and parsed');
+
+/*
+ * ================================================================================================================
+ *                                           Refresh button event
+ * ================================================================================================================
+ * */
+    // arrow function is to prevent ajax(); from firing until event dispatches
+    // also, an 'event' parameter is sent with the arrow function and is passed as the
+    // last argument to ajax(); function.
+    btnRefresh.onclick = event => {ajax('GET', 'https://hidden-headland-7200.herokuapp.com/', function(xhr){
+        // the json object with
+        // an array of object messages
+        var messages = xhr.response,
+
+            // string that will later be concatenated into the
+            // innerHTML.
+            string = '',
+
+            // caching the <section class="msgBoard"> tag.
+            msgBoard = document.querySelector('.msgBoard');
+
+        // looping over all the message objects
+        for (var i = 0; i < messages.length; i++){
+            string += '<article class="msg"><h1>' + messages[i].name + '</h1><p data-layout="hide"> ID:' + messages[i]._id + '</p><p>' + messages[i].message + '</p></article>';
+        }
+
+        // assigning messages to msgBoard
+        msgBoard.innerHTML = string;
+
+        //after all messages pushed to DOM - select all in array like.
+        msgArray = document.querySelectorAll('.msg');
+
+        parseEventListeners();
+
+    },'','','',event)};
+
+
 /*
 * ================================================================================================================
-*                                           Refresh button event
+*                                           Post button event
 * ================================================================================================================
 * */
-                    // arrow function is to prevent ajax(); from firing until event dispatches
-                    // also, an 'event' parameter is sent with the arrow function and is passed as the
-                    // last argument to ajax(); function.
-btnRefresh.onclick = event => {ajax('GET', 'https://hidden-headland-7200.herokuapp.com/', function(xhr){
-    // the json object with
-    // an array of object messages
-    var messages = xhr.response,
 
-    // string that will later be concatenated into the
-    // innerHTML.
-        string = '',
+    btnPost.onclick = event => {ajax('POST', 'https://hidden-headland-7200.herokuapp.com/new', function(xhr){
+        var feedback = xhr.response !== null ? xhr.response.message : "no response";
+        console.log("message status: " + feedback);
 
-    // caching the <section class="msgBoard"> tag.
-        msgBoard = document.querySelector('.msgBoard');
+        // upon success simulates click event on refresh button to load new posts
+        btnRefresh.click();
 
-    // looping over all the message objects
-    for (var i = 0; i < messages.length; i++){
-        string += '<article class="msg"><h1>' + messages[i].name + '</h1><p data-layout="hide"> ID:' + messages[i]._id + '</p><p>' + messages[i].message + '</p></article>';
-    }
+        //body argument                                                    headers argument   responseType argument
+    },'{"message":"'+ msgBody.value + '","name":"' + usrName.value +'"}','Content-Type:application/json','json',event)};
 
-    // assigning messages to msgBoard
-    msgBoard.innerHTML = string;
 
-    //after all messages pushed to DOM - select all in array like.
-    msgArray = document.querySelectorAll('.msg');
+/*
+* ================================================================================================================
+*                                           Delete button event
+* ================================================================================================================
+* */
 
-    // assign all present messaged with an event listener
+    btnDelete.onclick = event => {ajax('DELETE', ('https://hidden-headland-7200.herokuapp.com/delete/' + msgId.value), function(xhr){
+        var feedback = xhr.response !== null ? xhr.response.message : "no response";
+        console.log("message status: " + feedback);
+        btnRefresh.click();
+
+    },'','Content-Type:application/json','json',event)};
+
+
+/*
+* ================================================================================================================
+*                                           Edit button event
+* ================================================================================================================
+* */
+
+    btnChange.onclick = event => {ajax('PUT', ('https://hidden-headland-7200.herokuapp.com/edit/' + msgId.value), function(xhr){
+        var feedback = xhr.response !== null ? xhr.response.message : "no response";
+        console.log("message status: " + feedback);
+        btnRefresh.click();
+
+    },'{"message":"'+ msgBody.value + '","name":"' + usrName.value +'"}','Content-Type:application/json','json',event)};
+
+
+
+
+});
+
+/*
+ * ================================================================================================================
+ *                                           Click editing Utility
+ * ================================================================================================================
+ * */
+
+function parseEventListeners() {
+// assign all present messaged with an event listener
     for (var j = 0; j < msgArray.length; j++) {
-        msgArray[j].addEventListener('click', function(){
+        msgArray[j].addEventListener('click', function () {
 
 
 
             //and assign the clicked element with a selected state.
             // if it has one already remove the attribute.
-            if (this.hasAttribute('data-state')){
+            if (this.hasAttribute('data-state')) {
                 this.removeAttribute('data-state');
             } else {
                 //when clicked remove all selected states
-                for(var i = 0; i < msgArray.length; i++){
+                for (var i = 0; i < msgArray.length; i++) {
                     msgArray[i].removeAttribute('data-state');
                 }
                 // assign the clicked element with a selected state.
@@ -149,19 +214,18 @@ btnRefresh.onclick = event => {ajax('GET', 'https://hidden-headland-7200.herokua
             }
 
 
-
             // insert the id value of current selected message to the msgId input field
             msgId.value = this.childNodes[1].textContent.slice(4);
 
             // if an article is currently selected - unhide edit button
-            if (this.hasAttribute('data-state')){
+            if (this.hasAttribute('data-state')) {
                 btnChange.setAttribute('data-state', 'selected');
             } else {  // if it isn't hide it
                 btnChange.removeAttribute('data-state');
             }
 
             // exactly the same for the delete button
-            if (this.hasAttribute('data-state')){
+            if (this.hasAttribute('data-state')) {
                 btnDelete.setAttribute('data-state', 'selected');
             } else {
                 btnDelete.removeAttribute('data-state');
@@ -170,57 +234,15 @@ btnRefresh.onclick = event => {ajax('GET', 'https://hidden-headland-7200.herokua
 
         });
     }
-},'','','',event)};
-
+}
 
 /*
- * ================================================================================================================
- *                                           Post button event
- * ================================================================================================================
- * */
+*============================================= END OF EDITING UTIL =====================================
+* */
 
-btnPost.onclick = event => {ajax('POST', 'https://hidden-headland-7200.herokuapp.com/new', function(xhr){
-    var feedback = xhr.response !== null ? xhr.response.message : "no response";
-    console.log("message status: " + feedback);
 
-    // upon success simulates click event on refresh button to load new posts
+// fire refresh when page is fully loaded.
+window.addEventListener('load', function(){
+    console.log('page finished loading');
     btnRefresh.click();
-
-    //body argument                                                    headers argument   responseType argument
-},'{"message":"'+ msgBody.value + '","name":"' + usrName.value +'"}','Content-Type:application/json','json',event)};
-
-
-/*
- * ================================================================================================================
- *                                           Delete button event
- * ================================================================================================================
- * */
-
-btnDelete.onclick = event => {ajax('DELETE', ('https://hidden-headland-7200.herokuapp.com/delete/' + msgId.value), function(xhr){
-    var feedback = xhr.response !== null ? xhr.response.message : "no response";
-    console.log("message status: " + feedback);
-    btnRefresh.click();
-
-},'','Content-Type:application/json','json',event)};
-
-
-/*
- * ================================================================================================================
- *                                           Edit button event
- * ================================================================================================================
- * */
-
-btnChange.onclick = event => {ajax('PUT', ('https://hidden-headland-7200.herokuapp.com/edit/' + msgId.value), function(xhr){
-    var feedback = xhr.response !== null ? xhr.response.message : "no response";
-    console.log("message status: " + feedback);
-    btnRefresh.click();
-
-},'{"message":"'+ msgBody.value + '","name":"' + usrName.value +'"}','Content-Type:application/json','json',event)};
-
-
-/*
- * ================================================================================================================
- *                                           Click editing Utility
- * ================================================================================================================
- * */
-
+});
