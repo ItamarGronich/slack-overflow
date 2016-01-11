@@ -28,7 +28,8 @@
     }
 
     #refresh {
-        width: 64px;
+        width: 8%;
+        max-width: 64px;
     }
 
     #refresh:hover {
