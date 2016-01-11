@@ -3,7 +3,8 @@ var btnRefresh = document.querySelector('#refresh'),
     btnDelete = document.querySelector('#delete'),
     btnChange = document.querySelector('#change'),
     DONE = 4,
-    OK = 200;
+    OK = 200,
+    msgArray; // variable will be assigned with all messages elements
 
 // disables form default validation mechanisms.
 function validateMyForm(){
@@ -77,7 +78,9 @@ function ajax(request, url, callback, body, headers, responseType){
 
         // if DONE and OK
         if(xhr.readyState === DONE && xhr.status === OK){
-            console.log(xhr.response.message);
+            if (xhr.response !== null){
+                console.log(xhr.response.message || "no response");
+            }
             callback(xhr); // evoke callback with xhr object as first argument.
 
         // if DONE but not OK
@@ -101,7 +104,7 @@ function ajax(request, url, callback, body, headers, responseType){
 * ================================================================================================================
 * */
                     // arrow function is to prevent ajax(); from firing until event dispatches
-                    // also an 'event parmeter is sent with the arrow function and is passed as the '
+                    // also, an 'event' parameter is sent with the arrow function and is passed as the
                     // last argument to ajax(); function.
 btnRefresh.onclick = event => {ajax('GET', 'https://hidden-headland-7200.herokuapp.com/', function(xhr){
     // the json object with
@@ -117,11 +120,56 @@ btnRefresh.onclick = event => {ajax('GET', 'https://hidden-headland-7200.herokua
 
     // looping over all the message objects
     for (var i = 0; i < messages.length; i++){
-        string += '<article class="msg"><h1>' + messages[i].name + '</h1><p> ID:' + messages[i]._id + '</p><p>' + messages[i].message + '</p></article>';
+        string += '<article class="msg"><h1>' + messages[i].name + '</h1><p data-layout="hide"> ID:' + messages[i]._id + '</p><p>' + messages[i].message + '</p></article>';
     }
 
     // assigning messages to msgBoard
     msgBoard.innerHTML = string;
+
+    //after all messages pushed to DOM - select all in array like.
+    msgArray = document.querySelectorAll('.msg');
+
+    // assign all present messaged with an event listener
+    for (var j = 0; j < msgArray.length; j++) {
+        msgArray[j].addEventListener('click', function(){
+
+
+
+            //and assign the clicked element with a selected state.
+            // if it has one already remove the attribute.
+            if (this.hasAttribute('data-state')){
+                this.removeAttribute('data-state');
+            } else {
+                //when clicked remove all selected states
+                for(var i = 0; i < msgArray.length; i++){
+                    msgArray[i].removeAttribute('data-state');
+                }
+                // assign the clicked element with a selected state.
+                this.setAttribute('data-state', 'selected');
+            }
+
+
+
+            // insert the id value of current selected message to the msgId input field
+            msgId.value = this.childNodes[1].textContent.slice(4);
+
+            // if an article is currently selected - unhide edit button
+            if (this.hasAttribute('data-state')){
+                btnChange.setAttribute('data-state', 'selected');
+            } else {  // if it isn't hide it
+                btnChange.removeAttribute('data-state');
+            }
+
+            // exactly the same for the delete button
+            if (this.hasAttribute('data-state')){
+                btnDelete.setAttribute('data-state', 'selected');
+            } else {
+                btnDelete.removeAttribute('data-state');
+            }
+
+
+        });
+    }
 },'','','',event)};
 
 
@@ -132,7 +180,7 @@ btnRefresh.onclick = event => {ajax('GET', 'https://hidden-headland-7200.herokua
  * */
 
 btnPost.onclick = event => {ajax('POST', 'https://hidden-headland-7200.herokuapp.com/new', function(xhr){
-    var feedback = xhr.response.message;
+    var feedback = xhr.response !== null ? xhr.response.message : "no response";
     console.log("message status: " + feedback);
 
     // upon success simulates click event on refresh button to load new posts
@@ -149,7 +197,7 @@ btnPost.onclick = event => {ajax('POST', 'https://hidden-headland-7200.herokuapp
  * */
 
 btnDelete.onclick = event => {ajax('DELETE', ('https://hidden-headland-7200.herokuapp.com/delete/' + msgId.value), function(xhr){
-    var feedback = xhr.response.message;
+    var feedback = xhr.response !== null ? xhr.response.message : "no response";
     console.log("message status: " + feedback);
     btnRefresh.click();
 
@@ -163,8 +211,16 @@ btnDelete.onclick = event => {ajax('DELETE', ('https://hidden-headland-7200.hero
  * */
 
 btnChange.onclick = event => {ajax('PUT', ('https://hidden-headland-7200.herokuapp.com/edit/' + msgId.value), function(xhr){
-    var feedback = xhr.response.message;
+    var feedback = xhr.response !== null ? xhr.response.message : "no response";
     console.log("message status: " + feedback);
     btnRefresh.click();
 
 },'{"message":"'+ msgBody.value + '","name":"' + usrName.value +'"}','Content-Type:application/json','json',event)};
+
+
+/*
+ * ================================================================================================================
+ *                                           Click editing Utility
+ * ================================================================================================================
+ * */
+

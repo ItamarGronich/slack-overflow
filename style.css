@@ -115,11 +115,20 @@ body, html {
     right: 2%;
 }
 
+#post:hover {
+    color: white;
+}
+
 #change {
     position: absolute;
     top: 3%;
     right: 2%;
 }
+
+#post:hover {
+    color: white;
+}
+
 
 #delete {
     position: absolute;
@@ -134,9 +143,12 @@ body, html {
     width: 10%;
     transform: translate(-50%);
     z-index: 200;
+    transition: width 100ms;
 }
 
-
+#refresh:hover {
+    width: 12%;
+}
 
 [data-layout~="fill"] {
     width: 100%;
@@ -148,27 +160,46 @@ body, html {
     font-size: 75%;
 }
 
-/*desktop layout*/
-/*@media screen and (min-width: 480px) {
-    [data-layout="mainFrame"] {
-        width: 80%;
-        height: 90%;
-        border: solid;
-        overflow: hidden;
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-
-    }
-}*/
-
+[data-layout~="hide"] {
+    display: none;
+}
 
 /*
 ===================================================================================================
                              Utils
 ===================================================================================================
 */
+
+/*msg icons*/
+.msg:before {
+    content: url('icon256.png');
+    display: block;
+    float: left;
+    clear: left;
+    width: 5em;
+    height: 6em;
+    transform: scale(0.3,0.3) translate(-150%,-150%);
+}
+
+.msg {
+    min-height: 7em;
+    margin-bottom: 1em;
+    padding: 1em;
+}
+
+.msg > * {
+    margin: 0 0 0 5rem;
+}
+
+
+.msg:hover {
+    background: rgba(0,0,0,.2);
+    cursor: pointer;
+}
+
+[data-state="selected"] {
+    background: rgba(0,0,0,.3);
+}
 
 [data-msgBody]{
     width: 75vw;
@@ -184,6 +215,61 @@ body, html {
     vertical-align: middle;
 }
 
+
+#post {
+    position: absolute;
+    bottom: 3%;
+    right: 2%;
+}
+
+#post:hover {
+    color: white;
+}
+
+#change {
+    display: none;
+    position: absolute;
+    top: 3%;
+    right: 2%;
+}
+
+#change:hover {
+    color: white;
+    cursor: pointer;
+}
+
+#change[data-state~="selected"] {
+    display: inline-block;
+    background: none;
+}
+
+#delete {
+    display: none;
+    position: absolute;
+    top: 3%;
+    right: 15%;
+    color: red;
+}
+
+#delete:hover {
+    color: crimson;
+    cursor: pointer;
+}
+
+#delete[data-state~="selected"] {
+    display: inline-block;
+    background: none;
+}
+
+
+#refresh {
+    position: absolute;
+    top: 12%;
+    left: 50%;
+    width: 10%;
+    transform: translate(-50%);
+    z-index: 200;
+}
 /*
 ===================================================================================================
                              Resets

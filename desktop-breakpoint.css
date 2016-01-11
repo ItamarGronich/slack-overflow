@@ -28,8 +28,13 @@
     }
 
     #refresh {
-        max-width: 64px;
+        width: 64px;
     }
+
+    #refresh:hover {
+        width: 6%;
+    }
+
 
     #change {
         top: 1.5%;
