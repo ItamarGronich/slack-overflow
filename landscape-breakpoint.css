@@ -1,0 +1,5 @@
+@media screen and (max-height: 345px) {
+    #refresh {
+        top: 15%;
+    }
+}

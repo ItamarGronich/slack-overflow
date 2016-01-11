@@ -1,0 +1,56 @@
+/*
+iPhone 5
+*/
+
+@media screen and (min-height: 470px){
+    [data-layout~="header"]{
+        height: 8%;
+    }
+
+    [data-layout~="footer"]{
+        height: 8%;
+    }
+
+    [data-layout~="msgBoard"]{
+        height: 84%;
+        top: 8%;
+    }
+
+    #delete {
+        top: 2%;
+    }
+
+    #post {
+        bottom: 2%;
+    }
+
+    #change {
+        top: 2%;
+    }
+
+    #refresh {
+        top: 10%;
+    }
+}
+
+@media screen and (min-height: 600px){
+    [data-msgBody],
+    #usrName {
+        font-size: 90%;
+    }
+}
+
+@media screen and (min-height: 700px){
+
+    #delete {
+        top: 2.5%;
+    }
+
+    #post {
+        bottom: 2.5%;
+    }
+
+    #change {
+        top: 2.5%;
+    }
+}

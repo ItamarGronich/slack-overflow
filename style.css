@@ -1,41 +1,5 @@
-body {
-    font: 24px Helvetica, sans-serif;
-}
 
-form {
-    margin: 0 auto;
-    width: 900px;
-    text-align: center;
-}
 
-input {
-    margin: 1em;
-    width: 400px;
-    padding: .5em;
-    font: 24px Helvetica, sans-serif;
-}
-
-textarea {
-    vertical-align: top;
-    padding: 1em;
-    margin: 1em;
-    font: 16px Helvetica, sans-serif;
-}
-
-.msgBoard{
-    margin: 0 auto;
-    width: 900px;
-}
-
-.msg {
-    display: inline-block;
-    float: left;
-    clear: left;
-    margin: 1em;
-    border-radius: .5em;
-    padding: 1em;
-    background: rgba(0,120,220,0.5);
-}
 
 /*
 ===================================================================================================
@@ -43,10 +7,28 @@ textarea {
 ===================================================================================================
 */
 
+[data-color~="background-purple"]{
+    background-color: purple;
+    background-image: repeating-linear-gradient(45deg, transparent, transparent 20px, rgba(0,0,0,.2) 20px, rgba(0,0,0,.2) 40px);
+}
 
 
+[data-color~="background-grey"]{
+    background: linear-gradient( #dddddd 2%, #e6e6e6 98%, #cdcdcd);
+    
+}
 
+[data-color~="background-transparent"] {
+    background: transparent;
+}
 
+[data-color~="background-white"] {
+    background: white;
+}
+
+[data-color~="lightgrey"]{
+    color: darkgrey;
+}
 
 /*
 ===================================================================================================
@@ -54,8 +36,132 @@ textarea {
 ===================================================================================================
 */
 
+body, html {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    overflow: hidden;
+    box-sizing: border-box;
+}
+
+*,
+*:before,
+*:after {
+  box-sizing: inherit;
+}
+
+/*mobile layout*/
+
+[data-layout~="mainFrame"] {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    position: absolute;
+    top:0;
+    left: 0;
+    width: 100%;
+}
 
 
+[data-layout~="header"] {
+    padding: 0 1em 0 0;
+    vertical-align: middle;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 10%;
+    min-height: 2.5em;
+    z-index: 300;
+}
+
+[data-layout~="footer"] {
+    padding: 0;
+    vertical-align: middle;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 10%;
+    min-height: 2.5em;
+    z-index: 300;
+}
+
+[data-layout~="footer"]:before {
+    content: '';
+    display: inline-block;
+    height: 100%;
+    vertical-align: middle;
+}
+
+[data-layout~="msgBoard"]{
+    position: absolute;
+    top: 10%;
+    left: 0;
+    margin: 0;
+    height: 80%;
+    width: 100%;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding: 1em;
+    vertical-align: middle;
+}
+
+
+#post {
+    position: absolute;
+    bottom: 3%;
+    right: 2%;
+}
+
+#change {
+    position: absolute;
+    top: 3%;
+    right: 2%;
+}
+
+#delete {
+    position: absolute;
+    top: 3%;
+    right: 15%;
+}
+
+#refresh {
+    position: absolute;
+    top: 12%;
+    left: 50%;
+    width: 10%;
+    transform: translate(-50%);
+    z-index: 200;
+}
+
+
+
+[data-layout~="fill"] {
+    width: 100%;
+    min-width: 2.5em;
+}
+
+#usrName {
+    width: 50%;
+    font-size: 75%;
+}
+
+/*desktop layout*/
+/*@media screen and (min-width: 480px) {
+    [data-layout="mainFrame"] {
+        width: 80%;
+        height: 90%;
+        border: solid;
+        overflow: hidden;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+
+    }
+}*/
 
 
 /*
@@ -63,3 +169,64 @@ textarea {
                              Utils
 ===================================================================================================
 */
+
+[data-msgBody]{
+    width: 75vw;
+    font-size: 75%;
+}
+
+
+[data-logo] {
+    display: inline-block;
+    background: url('web-slack-icon.png') center / 80% no-repeat;
+    height: 100%;
+    width: 3em;
+    vertical-align: middle;
+}
+
+/*
+===================================================================================================
+                             Resets
+===================================================================================================
+*/
+
+/*general input styles*/
+input {
+    border: none;
+    outline: none;
+    border-radius: .3em;
+    padding: .5em 1em;
+    margin: 0;
+    vertical-align: middle;
+}
+
+#msgId, label[for="msgId"] {
+    display: none;
+}
+
+
+button {
+    border: none;
+    outline: none;
+}
+
+
+/*
+===================================================================================================
+                             Typography
+===================================================================================================
+*/
+
+
+body {
+    font-family: Heletica, sans-serif;
+    font-size: 100%;
+}
+
+
+input, button, label {
+    font: inherit;
+    display: inline-block;
+    vertical-align: middle;
+    z-index: 400;
+}

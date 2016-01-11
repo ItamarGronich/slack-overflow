@@ -1,0 +1,96 @@
+@media screen and (min-width: 750px) {
+    [data-layout~="mainFrame"] {
+        width: 85%;
+        height: 90%;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+    }
+
+    [data-layout~="header"] {
+        height: 6%;
+    }
+
+    [data-layout~="footer"] {
+        height: 6%;
+    }
+
+    [data-layout~="msgBoard"] {
+        top: 6.2%;
+        height: 87.6%;
+    }
+
+    [data-layout~="whiteBoard"] {
+        overflow: hidden;
+        height: 100%;
+        border-radius: .4em;
+    }
+
+    #refresh {
+        max-width: 64px;
+    }
+
+    #change {
+        top: 1.5%;
+    }
+
+    #delete {
+        top: 1.5%;
+        right: 7%;
+    }
+
+    #post {
+        bottom: 1.5%;
+    }
+
+    #usrName {
+        max-width: 20em;
+    }
+
+    [data-msgBody] {
+        width: 91%;
+    }
+
+    /*
+    ===================================================================================================================
+                                    Design features.
+    ===================================================================================================================
+    */
+    [data-layout~="mainFrame"] {
+        border-radius: .4em;
+        box-shadow: 1.5em 1.5em 2em rgba(0, 0, 0, .6);
+    }
+
+    [data-layout~="clear-overflow"] {
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+    }
+
+    [data-layout~="header"] {
+        box-shadow: 0 .5em 2em rgba(0, 0, 0, .5);
+        border-bottom: 1px solid lightgray;
+        border-radius: .4em;
+        width: 100%;
+    }
+
+
+    [data-layout~="footer"] {
+        box-shadow: 0 -.5em 2em rgba(0, 0, 0, .5);
+        border-top: 1px solid lightgray;
+        border-radius: .4em;
+        width: 100%;
+    }
+
+    [data-logo] {
+        background: none;
+        margin-right: 1em;
+    }
+
+    [data-logo]:before {
+        content: url('slack-logo-desktop.png');
+        display: block;
+        transform: scale(0.2, 0.2) translate(-500%, -230%);
+    }
+}

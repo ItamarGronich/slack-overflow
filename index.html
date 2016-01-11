@@ -4,29 +4,42 @@
     <meta charset="UTF-8">
     <title>Slack Overflow</title>
     <link rel="stylesheet" href="style.css" type="text/css" />
+    <link rel="stylesheet" href="landscape-breakpoint.css" type="text/css" />
+    <link rel="stylesheet" href="hd-mobile.css" type="text/css" />
+    <link rel="stylesheet" href="desktop-breakpoint.css" type="text/css" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
 </head>
-<body>
-<form onsubmit="event.preventDefault(); validateMyForm();">
-    <h1>The shittiest forum ever</h1>
+<body data-color="background-purple">
 
-    <section>
-        <label for="usrName">Name:</label>
-        <input type="text" id="usrName"/>
-    </section>
-    <section>
-        <label for="msgId">Message ID:</label>
-        <input id="msgId" />
-    </section>
-    <section>
-        <label for="msgBody">Message:</label>
-        <textarea cols="50" rows="20" id="msgBody"></textarea>
-    </section>
-    <button id="refresh">Refresh</button>
-    <button id="post">Post</button>
-    <button id="change">Change</button>
-    <button id="delete">Delete</button>
+<main data-layout="mainFrame">
 
-</form>
-<section class="msgBoard"></section>
+    <div data-layout="clear-overflow">
+        <form onsubmit="event.preventDefault(); validateMyForm();">
+            <section data-color="background-grey" data-layout="header">
+                <label for="usrName" value="name" data-logo=""></label>
+                <input type="text" id="usrName" placeholder="Your Name here ... "/>
+            </section>
+            <section>
+                <label for="msgId">Message ID:</label>
+                <input id="msgId"/>
+            </section>
+            <section data-layout="footer" data-color="background-grey">
+                <label for="msgBody" value="message body"></label>
+                <input id="msgBody" data-msgBody=""/>
+            </section>
+            <button id="refresh" data-color="background-transparent">
+                <img src="reload8.svg" alt="" data-layout="fill">
+            </button>
+            <button id="post" data-color="background-transparent lightgrey">Send</button>
+            <button id="change" data-color="background-transparent lightgrey">Edit</button>
+            <button id="delete" data-color="background-transparent lightgrey">Delete</button>
+        </form>
+        <div data-layout="whiteBoard" data-color="background-white">
+            <section class="msgBoard" data-layout="msgBoard" data-color="background-white"></section>
+        </div>
+    </div>
+
+</main>
+
 <script src="main.js"></script>
 </body>
