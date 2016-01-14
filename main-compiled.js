@@ -44,6 +44,7 @@ var chatModule = function () {
         form = document.querySelector('#chatInput'),
         DONE = 4,
         OK = 200,
+        url = 'https://hidden-headland-7200.herokuapp.com/',
         msgArray; // variable will be assigned with all messages elements
 
     // disables form default validation mechanisms.
@@ -236,7 +237,7 @@ var chatModule = function () {
             if (event) event.stopPropagation();
 
             // return ! Promised ! AJAX request to get messages
-            return core.ajax('GET', 'https://hidden-headland-7200.herokuapp.com/', function (xhr, resolve) {
+            return core.ajax('GET', url, function (xhr, resolve) {
 
                 // the json object with
                 // an array of object messages
@@ -276,13 +277,12 @@ var chatModule = function () {
 
             event.stopPropagation();
 
-            return core.ajax('POST', 'https://hidden-headland-7200.herokuapp.com/new', function (xhr) {
+            return core.ajax('POST', url + 'new', function (xhr, resolve) {
                 var feedback = xhr.response !== null ? xhr.response.message : "no response";
                 console.log("message status: " + feedback);
 
-                // upon success refresh new posts
-                return refresh();
-            }, '{"message":"' + msgBody.value + '","name":"' + usrName.value + '"}', 'Content-Type:application/json', 'json');
+                resolve(event);
+            }, '{"message":"' + msgBody.value + '","name":"' + usrName.value + '"}', 'Content-Type:application/json', 'json').then(refresh);
         }
 
         /*
@@ -295,12 +295,12 @@ var chatModule = function () {
 
             event.stopPropagation();
 
-            return core.ajax('DELETE', 'https://hidden-headland-7200.herokuapp.com/delete/' + msgId.value, function (xhr) {
+            return core.ajax('DELETE', url + 'delete/' + msgId.value, function (xhr, resolve) {
                 var feedback = xhr.response !== null ? xhr.response.message : "no response";
                 console.log("message status: " + feedback);
 
-                return refresh();
-            }, '', 'Content-Type:application/json', 'json');
+                resolve(event);
+            }, '', 'Content-Type:application/json', 'json').then(refresh);
         }
 
         /*
@@ -313,12 +313,12 @@ var chatModule = function () {
 
             event.stopPropagation();
 
-            return core.ajax('PUT', 'https://hidden-headland-7200.herokuapp.com/edit/' + msgId.value, function (xhr) {
+            return core.ajax('PUT', url + 'edit/' + msgId.value, function (xhr, resolve) {
                 var feedback = xhr.response !== null ? xhr.response.message : "no response";
                 console.log("message status: " + feedback);
 
-                return refresh();
-            }, '{"message":"' + msgBody.value + '","name":"' + usrName.value + '"}', 'Content-Type:application/json', 'json');
+                resolve(event);
+            }, '{"message":"' + msgBody.value + '","name":"' + usrName.value + '"}', 'Content-Type:application/json', 'json').then(refresh);
         }
 
         //return utils api
@@ -335,8 +335,12 @@ var chatModule = function () {
         console.log('DOM fully loaded and parsed');
 
         //initializing event listeners
-        btnRefresh.onclick = utils.refresh;
-        btnPost.onclick = utils.send;
+        btnRefresh.onclick = event => {
+            utils.refresh(event).then(utils.scrollToBottom);
+        };
+        btnPost.onclick = event => {
+            utils.send(event).then(utils.scrollToBottom);
+        };
         btnChange.onclick = utils.edit;
         btnDelete.onclick = utils.remove;
     });
