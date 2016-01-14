@@ -141,9 +141,15 @@ var chatModule = (function(){
                 };
 
                 // sends the request.
-                // if body exists and or it's a null => send request with specified body
+                // if body exists or it's a null => send request with specified body
                 // else send request with no body
-                body || body === null ? xhr.send(body) : xhr.send();
+                if(typeof body === 'function') {
+                    xhr.send(body());
+                }else if( body !== null && body !== undefined) {
+                    xhr.send(body);
+                } else {
+                    xhr.send();
+                }
 
                 console.log('request ' + request + ' has been sent');
             });
@@ -163,6 +169,13 @@ var chatModule = (function(){
 
 
     var utils = (function(){
+        var contentJson  = 'Content-Type:application/json',
+            datasetState = 'data-state',
+            selected     = 'selected',
+            empty        = 'empty response',
+            logFeedback  = function(xhr){var feedback = xhr.response !== null ? xhr.response.message : empty;
+                console.log("message status: " + feedback);},
+            getMessage   = function (){return '{"message":"'+ msgBody.value + '","name":"' + usrName.value +'"}'};
 
 
 /*
@@ -183,15 +196,15 @@ var chatModule = (function(){
                     //onclick - assign the clicked element with a selected state.
 
                     // if it has one already remove the attribute.
-                    if (this.hasAttribute('data-state')) {
-                        this.removeAttribute('data-state');
+                    if (this.hasAttribute(datasetState)) {
+                        this.removeAttribute(datasetState);
                     } else {
                         //when clicked remove all selected states
                         for (var i = 0; i < msgArray.length; i++) {
-                            msgArray[i].removeAttribute('data-state');
+                            msgArray[i].removeAttribute(datasetState);
                         }
                         // and assign the clicked element with a selected state.
-                        this.setAttribute('data-state', 'selected');
+                        this.setAttribute(datasetState, selected);
                     }
 
 
@@ -200,11 +213,11 @@ var chatModule = (function(){
 
                     // if a message is currently selected - unhide edit and delete button
                     if (this.hasAttribute('data-state')) {
-                        btnChange.setAttribute('data-state', 'selected');
-                        btnDelete.setAttribute('data-state', 'selected');
+                        btnChange.setAttribute(datasetState, selected);
+                        btnDelete.setAttribute(datasetState, selected);
                     } else {  // if it isn't hide it
-                        btnChange.removeAttribute('data-state');
-                        btnDelete.removeAttribute('data-state');
+                        btnChange.removeAttribute(datasetState);
+                        btnDelete.removeAttribute(datasetState);
                     }
 
                 });
@@ -294,15 +307,14 @@ var chatModule = (function(){
 
             return core.ajax('POST', url + 'new',
                 function(xhr, resolve){
-                    var feedback = xhr.response !== null ? xhr.response.message : "no response";
-                    console.log("message status: " + feedback);
+                    logFeedback(xhr);
 
                     resolve(event);
 
                 },
-                '{"message":"'+ msgBody.value + '","name":"' + usrName.value +'"}',
-                'Content-Type:application/json',
-                'json').then(refresh)
+                getMessage(),
+                contentJson)
+                .then(refresh)
         }
 
 
@@ -318,14 +330,13 @@ var chatModule = (function(){
 
             return core.ajax('DELETE', (url + 'delete/' + msgId.value),
                 function(xhr, resolve){
-                    var feedback = xhr.response !== null ? xhr.response.message : "no response";
-                    console.log("message status: " + feedback);
+                    logFeedback(xhr);
 
                     resolve(event);
                 },
                 '',
-                'Content-Type:application/json',
-                'json').then(refresh)
+                contentJson)
+                .then(refresh)
         }
 
 
@@ -341,15 +352,14 @@ var chatModule = (function(){
 
             return core.ajax('PUT', (url + 'edit/' + msgId.value),
                 function(xhr, resolve){
-                    var feedback = xhr.response !== null ? xhr.response.message : "no response";
-                    console.log("message status: " + feedback);
+                    logFeedback(xhr);
 
                     resolve(event);
 
                 },
-                '{"message":"'+ msgBody.value + '","name":"' + usrName.value +'"}',
-                'Content-Type:application/json',
-                'json').then(refresh)
+                getMessage(),
+                contentJson)
+                .then(refresh)
         }
 
         //return utils api
